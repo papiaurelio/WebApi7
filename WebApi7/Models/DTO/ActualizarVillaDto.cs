@@ -2,8 +2,9 @@
 
 namespace WebApi7.Models.DTO
 {
-    public class VillaDTO
+    public class ActualizarVillaDto
     {
+        [Required]
         public int Id { get; set; }
 
         [Required]
@@ -13,8 +14,6 @@ namespace WebApi7.Models.DTO
         public int Ocupantes { get; set; }
         public double MetrosCuadrados { get; set; }
         public int Tarifa { get; set; }
-        public string ImagenUrl { get; set; }
-        public string Amenidad { get; set; }
 
     }
 }

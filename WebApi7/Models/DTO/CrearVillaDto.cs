@@ -2,10 +2,8 @@
 
 namespace WebApi7.Models.DTO
 {
-    public class VillaDTO
+    public class CrearVillaDto
     {
-        public int Id { get; set; }
-
         [Required]
         [MaxLength(150)]
         public string Nombre { get; set; }
