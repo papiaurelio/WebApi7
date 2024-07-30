@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApi7.Datos;
 using WebApi7.Models;
 using WebApi7.Models.DTO;
@@ -130,16 +131,13 @@ namespace WebApi7.Controllers
                 return BadRequest();
             }
 
-            var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
+
+            var villa = _context.Villas.AsNoTracking().FirstOrDefault(x => x.Id == id);
 
             if(villa == null)
             {
-                return NotFound(villaActualizada.Id);
+                return NotFound("No existe el id: " + id);
             }
-
-            //villa.Nombre = villaActualizada.Nombre;
-            //villa.MetrosCuadrados = villaActualizada.MetrosCuadrados;
-            //villa.Ocupantes = villaActualizada.Ocupantes;
 
             Villa modelo = new Villa()
             {
@@ -157,29 +155,5 @@ namespace WebApi7.Controllers
 
             return NoContent();
         }
-
-
-        //[HttpPatch("id")]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public IActionResult UpdatePartialVilla(int id,JsonPatchDocument<VillaDTO> patchDto)
-        //{
-        //    if (patchDto == null || id == 0)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
-
-        //    patchDto.ApplyTo(villa, ModelState);
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    return NoContent();
-        //}
     }
 }
