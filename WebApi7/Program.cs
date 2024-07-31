@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi7.Datos;
 using WebApi7.Mapper;
+using WebApi7.Repositorio;
+using WebApi7.Repositorio.IRepositorio;
 using WebApi7.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 });
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddScoped<IVillaRepositorio, VillaRepositorio>();
 
 var app = builder.Build();
 

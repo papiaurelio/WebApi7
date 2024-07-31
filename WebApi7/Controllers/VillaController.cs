@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi7.Datos;
 using WebApi7.Models;
 using WebApi7.Models.DTO;
+using WebApi7.Repositorio.IRepositorio;
 
 namespace WebApi7.Controllers
 {
@@ -14,13 +15,13 @@ namespace WebApi7.Controllers
     public class VillaController : ControllerBase
     {
         private readonly ILogger<VillaController> _logger;
-        private readonly ApplicationDbContext _context;
+        private readonly IVillaRepositorio _villaRepositorio;
         private readonly IMapper _mapper;
 
-        public VillaController(ILogger<VillaController> logger, ApplicationDbContext context, IMapper mapper)
+        public VillaController(ILogger<VillaController> logger, IVillaRepositorio villaRepositoriop, IMapper mapper)
         {
             _logger = logger;
-            _context = context;
+            _villaRepositorio = villaRepositoriop;
             _mapper = mapper;
         }
 
@@ -29,7 +30,7 @@ namespace WebApi7.Controllers
         public async Task<ActionResult<IEnumerable<VillaDTO>>> GetVillas()
         {
             _logger.LogInformation("Obteniendo informacion");
-            IEnumerable<Villa> villasList = await _context.Villas.ToListAsync();
+            IEnumerable<Villa> villasList = await _villaRepositorio.ObtenerTodos();
             return Ok(_mapper.Map<IEnumerable<VillaDTO>>(villasList));
         }
 
@@ -46,7 +47,7 @@ namespace WebApi7.Controllers
             }
 
             //var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
-            var villa = await _context.Villas.FirstOrDefaultAsync(x => x.Id == id); 
+            var villa = await _villaRepositorio.Obtener(x => x.Id == id); 
              
             if (villa == null)
             {
@@ -67,7 +68,7 @@ namespace WebApi7.Controllers
                 return BadRequest(ModelState);
             }
 
-            if(await _context.Villas.FirstOrDefaultAsync(x => x.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
+            if(await _villaRepositorio.Obtener(x => x.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
             {
                 ModelState.AddModelError("NombreExiste", "La villa ya existe.");
                 return BadRequest(ModelState);
@@ -80,8 +81,7 @@ namespace WebApi7.Controllers
 
             Villa modelo = _mapper.Map<Villa>(createDto);
 
-            await _context.Villas.AddAsync(modelo);
-            await _context.SaveChangesAsync();
+            await _villaRepositorio.Crear(modelo);
             return CreatedAtRoute("GetVilla", new {id= modelo.Id}, modelo);
         }
 
@@ -96,15 +96,14 @@ namespace WebApi7.Controllers
                 return BadRequest();
             }
 
-            var villa = await _context.Villas.FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _villaRepositorio.Obtener(x => x.Id == id);
 
             if(villa == null)
             {
                 return NotFound();
             }
 
-            _context.Villas.Remove(villa);
-            await _context.SaveChangesAsync();
+            await _villaRepositorio.Remover(villa);
 
             //Un delete simepre retorna un NoContent
             return NoContent();
@@ -122,7 +121,7 @@ namespace WebApi7.Controllers
             }
 
 
-            var villa = await _context.Villas.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _villaRepositorio.Obtener(x => x.Id == id, tracked:false);
 
             if(villa == null)
             {
@@ -131,8 +130,7 @@ namespace WebApi7.Controllers
 
             Villa modelo = _mapper.Map<Villa>(villaActualizada);
 
-            _context.Villas.Update(modelo);
-            await _context.SaveChangesAsync();
+            await _villaRepositorio.Actualizar(modelo);
             return NoContent();
         }
     }
