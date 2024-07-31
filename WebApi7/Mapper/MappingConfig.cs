@@ -13,6 +13,11 @@ namespace WebApi7.Mapper
 
             CreateMap<Villa, CrearVillaDto>().ReverseMap();
             CreateMap<Villa, ActualizarVillaDto>().ReverseMap();
+
+            CreateMap<NumeroVilla, NumeroVillaDto>().ReverseMap();
+            CreateMap<NumeroVilla, CrearNumeroVillaDto>().ReverseMap();
+            CreateMap<NumeroVilla, ActualizarNumeroVillaDto>().ReverseMap();
+
         }
     }
 }

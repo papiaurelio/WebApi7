@@ -4,18 +4,19 @@ using WebApi7.Repositorio.IRepositorio;
 
 namespace WebApi7.Repositorio
 {
-    public class VillaRepositorio : Repositorio<Villa>, IVillaRepositorio
+    public class NumeroVillaRepositorio : Repositorio<NumeroVilla>, INumeroVillaRepositorio
     {
         private readonly ApplicationDbContext _context;
 
-        public VillaRepositorio(ApplicationDbContext context) : base(context)
+        public NumeroVillaRepositorio(ApplicationDbContext context) : base(context) 
         {
             _context = context;
         }
-        public async Task<Villa> Actualizar(Villa entidad)
+
+        public async Task<NumeroVilla> Actualizar(NumeroVilla entidad)
         {
             entidad.FechaActualizacion = DateTime.Now;
-            _context.Villas.Update(entidad);
+            _context.NumeroVilla.Update(entidad);
             await _context.SaveChangesAsync();
 
             return entidad;
