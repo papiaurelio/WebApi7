@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi7", "WebApi7\WebApi7.csproj", "{8743B81E-8C53-496E-A65F-23754F15C049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi7", "WebApi7\WebApi7.csproj", "{8743B81E-8C53-496E-A65F-23754F15C049}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Villa_Web", "Villa_Web\Villa_Web.csproj", "{E5941F8D-AE6F-4596-84D7-A06195F2BE74}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73B538FD-D832-4E1A-80D6-6572C641B51F} = {73B538FD-D832-4E1A-80D6-6572C641B51F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Villa_Utilidades", "Villa_Utilidades\Villa_Utilidades.csproj", "{73B538FD-D832-4E1A-80D6-6572C641B51F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,14 @@ Global
 		{8743B81E-8C53-496E-A65F-23754F15C049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8743B81E-8C53-496E-A65F-23754F15C049}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8743B81E-8C53-496E-A65F-23754F15C049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5941F8D-AE6F-4596-84D7-A06195F2BE74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5941F8D-AE6F-4596-84D7-A06195F2BE74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5941F8D-AE6F-4596-84D7-A06195F2BE74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5941F8D-AE6F-4596-84D7-A06195F2BE74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73B538FD-D832-4E1A-80D6-6572C641B51F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73B538FD-D832-4E1A-80D6-6572C641B51F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73B538FD-D832-4E1A-80D6-6572C641B51F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73B538FD-D832-4E1A-80D6-6572C641B51F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
