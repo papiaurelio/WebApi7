@@ -40,7 +40,7 @@ namespace WebApi7.Controllers
             try
             {
                 _logger.LogInformation("Obteniendo informacion");
-                IEnumerable<NumeroVilla> numeroVillasList = await _numeroVillaRepositorio.ObtenerTodos();
+                IEnumerable<NumeroVilla> numeroVillasList = await _numeroVillaRepositorio.ObtenerTodos(incluirPropiedades: "Villa");
 
                 _apiResponse.Resultado = _mapper.Map<IEnumerable<NumeroVillaDto>>(numeroVillasList);
                 _apiResponse.StatusCode = HttpStatusCode.OK;
@@ -59,7 +59,7 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpGet("id", Name = "GetNumeroVilla")]
+        [HttpGet("{id:int}", Name = "GetNumeroVilla")]
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,7 +74,7 @@ namespace WebApi7.Controllers
                     return BadRequest(_apiResponse);
                 }
 
-                var numeroVilla = await _numeroVillaRepositorio.Obtener(x => x.NoVilla == id);
+                var numeroVilla = await _numeroVillaRepositorio.Obtener(x => x.NoVilla == id, incluirPropiedades: "Villa");
 
                 if (numeroVilla == null)
                 {
@@ -117,7 +117,7 @@ namespace WebApi7.Controllers
 
                 if (await _numeroVillaRepositorio.Obtener(x => x.NoVilla == createDto.NoVilla) != null)
                 {
-                    ModelState.AddModelError("NumeroExiste", "El numero de villa ya existe.");
+                    ModelState.AddModelError("ErrorMessages", "El numero de villa ya existe.");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);
@@ -125,7 +125,7 @@ namespace WebApi7.Controllers
 
                 if (await _villaRepositorio.Obtener(v => v.Id == createDto.VillaId) == null)
                 {
-                    ModelState.AddModelError("ErrorVillaPadre", "Hay un error con la villa principal.");
+                    ModelState.AddModelError("ErrorMessages", "Hay un error con la villa principal.");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);
@@ -160,7 +160,7 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpDelete("id",Name = "DeleteNumeroVilla")]
+        [HttpDelete("{id:int}", Name = "DeleteNumeroVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -202,7 +202,7 @@ namespace WebApi7.Controllers
            
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -219,7 +219,7 @@ namespace WebApi7.Controllers
 
                 if (await _villaRepositorio.Obtener(v => v.Id == nVillaActualizada.VillaId) == null)
                 {
-                    ModelState.AddModelError("ErrorVillaPadre", "Hay un error con la villa principal.");
+                    ModelState.AddModelError("ErrorMessages", "Hay un error con la villa principal.");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);

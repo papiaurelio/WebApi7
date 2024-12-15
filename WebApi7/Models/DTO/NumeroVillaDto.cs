@@ -10,6 +10,10 @@ namespace WebApi7.Models.DTO
 
         [Required]
         public int VillaId { get; set; }
+
+        [MaxLength(300)]
         public string Detalle { get; set; }
+
+        public VillaDTO Villa { get; set; }
     }
 }

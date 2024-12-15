@@ -10,6 +10,11 @@ namespace Villa_Web.Models
 
         [Required]
         public int VillaId { get; set; }
+
+        public string ImagenUrl { get; set; }
+
+        [MaxLength(300)]
         public string Detalle { get; set; }
+        public VillaDTO Villa { get; set; }
     }
 }

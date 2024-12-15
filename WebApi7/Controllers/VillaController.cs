@@ -57,7 +57,7 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpGet("id", Name = "GetVilla")]
+        [HttpGet("{id:int}", Name = "GetVilla")]
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -115,7 +115,7 @@ namespace WebApi7.Controllers
 
                 if (await _villaRepositorio.Obtener(x => x.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
                 {
-                    ModelState.AddModelError("NombreExiste", "La villa ya existe.");
+                    ModelState.AddModelError("ErrorMessages", "La villa ya existe.");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);
@@ -150,7 +150,7 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpDelete("id",Name = "DeleteVilla")]
+        [HttpDelete("{id:int}", Name = "DeleteVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -192,7 +192,7 @@ namespace WebApi7.Controllers
            
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

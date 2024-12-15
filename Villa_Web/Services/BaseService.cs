@@ -1,5 +1,6 @@
 ﻿
 using Newtonsoft.Json;
+using System.Net;
 using System.Text;
 using Villa_Web.Models;
 using Villa_Web.Services.IServices;
@@ -61,25 +62,42 @@ namespace Villa_Web.Services
                 apiResponse = await client.SendAsync(message);
 
                 var apiContet = await apiResponse.Content.ReadAsStringAsync();
-                var APIResponse = JsonConvert.DeserializeObject<T>(apiContet);
+             
+                try
+                {
+                    APIResponse response = JsonConvert.DeserializeObject<APIResponse>(apiContet);
+                    if (apiResponse.StatusCode == HttpStatusCode.BadRequest || apiResponse.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                        response.IsExitoso = false;
+                        var res = JsonConvert.SerializeObject(response);
+                        var obj = JsonConvert.DeserializeObject<T>(res);
 
+                        return obj;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    var errorResponse = JsonConvert.DeserializeObject<T>(apiContet);
+                    return errorResponse;
+                }
+
+                var APIResponse = JsonConvert.DeserializeObject<T>(apiContet);
                 return APIResponse;
             }
             catch (Exception ex)
             {
-                var errors = new APIResponse
+                var dto = new APIResponse
                 {
-                    ErrorMessages = new List<string>()
-                    {
-                        Convert.ToString(ex.Message)
-                    },
+                    ErrorMessages = new List<string> { Convert.ToString(ex.Message) },
                     IsExitoso = false
                 };
 
-                var res = JsonConvert.SerializeObject(errors);
-                var APIResponse = JsonConvert.DeserializeObject<T>(res);
+                var res = JsonConvert.SerializeObject(dto);
+                var responseEx = JsonConvert.DeserializeObject<T>(res);
 
-                return APIResponse;
+                return responseEx;
             }
         }
     }

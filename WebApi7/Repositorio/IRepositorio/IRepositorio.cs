@@ -6,10 +6,10 @@ namespace WebApi7.Repositorio.IRepositorio
     {
         Task Crear(T entidad);
 
-        Task<List<T>> ObtenerTodos(Expression<Func<T, bool>> filtro = null);
+        Task<List<T>> ObtenerTodos(Expression<Func<T, bool>> filtro = null, string? incluirPropiedades = null);
 
         //tracked para trabajar con el objeto sin tener problemas de reutilizacion
-        Task<T> Obtener(Expression<Func<T, bool>> filtro = null, bool tracked = true);
+        Task<T> Obtener(Expression<Func<T, bool>> filtro = null, bool tracked = true, string? incluirPropiedades = null);
 
         Task Remover(T entidad);
 

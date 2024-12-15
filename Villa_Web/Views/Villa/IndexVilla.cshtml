@@ -36,13 +36,13 @@
                     <td>@item.Ocupantes</td>
                     <td>@((item.Tarifa).ToString("c"))</td>
                     <td>
-                        <a asp-controller="Villa" asp-action="ActualizarVilla" class="btn btn-success">
+                        <a asp-controller="Villa" asp-action="ActualizarVilla" asp-route-villaId="@item.Id" class="btn btn-success">
                             <i class="bi bi-pencil-square"></i>
                         </a>
                     </td>
 
                     <td>
-                        <a asp-controller="Villa" asp-action="RemoverVilla" class="btn btn-danger">
+                        <a asp-controller="Villa" asp-action="RemoverVilla" asp-route-villaId="@item.Id" class="btn btn-danger">
                             <i class="bi bi-trash3-fill"></i>
                         </a>
                     </td>
