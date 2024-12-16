@@ -9,8 +9,6 @@ namespace Villa_Web.Models
 
         [Required]
         public int VillaId { get; set; }
-
-        [MaxLength(300)]
         public string Detalle { get; set; }
     }
 }

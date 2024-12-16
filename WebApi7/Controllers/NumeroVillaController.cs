@@ -110,14 +110,12 @@ namespace WebApi7.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-
                     return BadRequest(ModelState);
                 }
 
                 if (await _numeroVillaRepositorio.Obtener(x => x.NoVilla == createDto.NoVilla) != null)
                 {
-                    ModelState.AddModelError("ErrorMessages", "El numero de villa ya existe.");
+                    ModelState.AddModelError("ErrorMessages", "El numero de villa ya existe");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);

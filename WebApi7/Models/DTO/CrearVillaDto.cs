@@ -9,7 +9,7 @@ namespace WebApi7.Models.DTO
         public string Nombre { get; set; }
 
 
-        [MaxLength(300)]
+        [MaxLength(300, ErrorMessage = "El texto es muy largo.")]
         public string Detalle { get; set; }
         public int Ocupantes { get; set; }
         public double MetrosCuadrados { get; set; }
@@ -18,7 +18,7 @@ namespace WebApi7.Models.DTO
         public int Tarifa { get; set; }
         public string ImagenUrl { get; set; }
 
-        [MaxLength(300)]
+        [MaxLength(300, ErrorMessage = "El texto es muy largo.")]
         public string Amenidad { get; set; }
 
     }

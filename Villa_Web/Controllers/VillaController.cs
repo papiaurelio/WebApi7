@@ -49,6 +49,14 @@ namespace Villa_Web.Controllers
                     TempData["exitoso"] = "Villa agregada exitosamente.";
                     return RedirectToAction(nameof(IndexVilla));
                 }
+
+                else
+                {
+                    if (response.ErrorMessages.Count > 0)
+                    {
+                        ModelState.AddModelError("ErrorMessages", response.ErrorMessages.FirstOrDefault());
+                    }
+                }
             }
 
             TempData["error"] = "Hubo un error.";
@@ -80,6 +88,14 @@ namespace Villa_Web.Controllers
                 {
                     TempData["exitoso"] = "Villa actualizada exitosamente.";
                     return RedirectToAction(nameof(IndexVilla));
+                }
+
+                else
+                {
+                    if (response.ErrorMessages.Count > 0)
+                    {
+                        ModelState.AddModelError("ErrorMessages", response.ErrorMessages.FirstOrDefault());
+                    }
                 }
             }
 

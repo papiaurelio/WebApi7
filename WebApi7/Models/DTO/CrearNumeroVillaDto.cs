@@ -10,7 +10,7 @@ namespace WebApi7.Models.DTO
         [Required]
         public int VillaId { get; set; }
 
-        [MaxLength(300)]
+        [MaxLength(300, ErrorMessage = "El texto es muy largo.")]
         public string Detalle { get; set; }
     }
 }

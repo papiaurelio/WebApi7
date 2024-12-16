@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using WebApi7.Datos;
 using WebApi7.Mapper;
+using WebApi7.Models;
 using WebApi7.Repositorio;
 using WebApi7.Repositorio.IRepositorio;
 using WebApi7.Services;
@@ -23,6 +26,27 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var apiResponse = new APIResponse
+        {
+            IsExitoso = false,
+            StatusCode = HttpStatusCode.BadRequest,
+            ErrorMessages = context.ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList()
+        };
+
+        return new BadRequestObjectResult(apiResponse);
+    };
+});
+
+//ESE CODIGO FUNCIONA PARA ESTANDARIZAR LOS ERRORES.
+
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IVillaRepositorio, VillaRepositorio>();
