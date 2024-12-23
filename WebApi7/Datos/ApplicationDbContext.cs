@@ -12,6 +12,7 @@ namespace WebApi7.Datos
         }
         public DbSet<Villa> Villas { get; set; }
         public DbSet<NumeroVilla> NumeroVilla { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

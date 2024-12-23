@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ namespace WebApi7.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [Authorize] 
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
 
@@ -61,6 +63,8 @@ namespace WebApi7.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize] 
+
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             try
@@ -102,6 +106,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles ="admin")]
         public async Task<ActionResult<APIResponse>> CrearVilla([FromBody] CrearVillaDto createDto)
         {
             try
@@ -154,6 +159,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
 
         public async Task<IActionResult> DeleteVilla(int id)
         {
@@ -196,6 +202,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateVilla(int id, [FromBody] ActualizarVillaDto villaActualizada) 
         {
             try

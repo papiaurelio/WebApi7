@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ namespace WebApi7.Controllers
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [Authorize]
         public async Task<ActionResult<APIResponse>> GetNumeroVillas()
         {
 
@@ -63,6 +65,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<ActionResult<APIResponse>> GetNumeroVilla(int id)
         {
             try
@@ -104,6 +107,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<APIResponse>> CrearNumeroVilla([FromBody] CrearNumeroVillaDto createDto)
         {
             try
@@ -162,6 +166,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
 
         public async Task<IActionResult> DeleteNumeroVilla(int id)
         {
@@ -204,6 +209,7 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateNumeroVilla(int id, [FromBody] ActualizarNumeroVillaDto nVillaActualizada) 
         {
             try
