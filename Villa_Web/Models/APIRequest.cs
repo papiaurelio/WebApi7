@@ -9,5 +9,7 @@ namespace Villa_Web.Models
         public string Url { get; set; }
 
         public object Datos { get; set; }
+
+        public string Token { get; set; }
     }
 }

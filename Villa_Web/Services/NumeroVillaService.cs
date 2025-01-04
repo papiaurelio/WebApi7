@@ -14,51 +14,56 @@ namespace Villa_Web.Services
             _httpClient = httpClient;
             _villaUrl = config.GetValue<string>("ServiceUrls:API_URL");
         }
-        public Task<T> Actualizar<T>(ActualizarNumeroVillaDto villaDto)
+        public Task<T> Actualizar<T>(ActualizarNumeroVillaDto villaDto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.PUT,
                 Datos = villaDto,
-                Url = _villaUrl + "/api/NumeroVilla/"+villaDto.NoVilla
+                Url = _villaUrl + "/api/NumeroVilla/"+villaDto.NoVilla,
+                Token = token
             });
         }
 
 
-        public Task<T> Crear<T>(CrearNumeroVillaDto villaDto)
+        public Task<T> Crear<T>(CrearNumeroVillaDto villaDto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.POST,
                 Datos = villaDto,
-                Url = _villaUrl+"/api/NumeroVilla"
+                Url = _villaUrl+"/api/NumeroVilla",
+                Token = token
             });
         }
 
-        public Task<T> Obtener<T>(int id)
+        public Task<T> Obtener<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.GET,
-                Url = _villaUrl + "/api/NumeroVilla/"+id
+                Url = _villaUrl + "/api/NumeroVilla/"+id,
+                Token = token
             });
         }
 
-        public Task<T> ObtenerTodos<T>()
+        public Task<T> ObtenerTodos<T>(string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.GET,
-                Url = _villaUrl + "/api/NumeroVilla/"
+                Url = _villaUrl + "/api/NumeroVilla/",
+                Token = token
             });
         }
 
-        public Task<T> Remover<T>(int id)
+        public Task<T> Remover<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.DELETE,
-                Url = _villaUrl + "/api/NumeroVilla/" + id
+                Url = _villaUrl + "/api/NumeroVilla/" + id,
+                Token = token
             });
         }
     }

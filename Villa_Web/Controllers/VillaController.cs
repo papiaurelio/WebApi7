@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Villa_Utilidades;
 using Villa_Web.Models;
 using Villa_Web.Services.IServices;
 
@@ -21,7 +22,7 @@ namespace Villa_Web.Controllers
         {
             List<VillaDTO> villaList = new();
 
-            var response = await _viallService.ObtenerTodos<APIResponse>();
+            var response = await _viallService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (response != null && response.IsExitoso)
             {
@@ -31,7 +32,7 @@ namespace Villa_Web.Controllers
         }
 
         //get
-        public async Task<IActionResult> CrearVilla()
+        public IActionResult CrearVilla()
         {
             return View(); //retorna la misma funcion
         }
@@ -42,7 +43,7 @@ namespace Villa_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _viallService.Crear<APIResponse>(modelo);
+                var response = await _viallService.Crear<APIResponse>(modelo, HttpContext.Session.GetString(DS.SessionToken));
 
                 if (response != null && response.IsExitoso == true) 
                 {
@@ -65,7 +66,7 @@ namespace Villa_Web.Controllers
 
         public async Task<IActionResult> ActualizarVilla(int villaId) //Se utiliza asp-route-villaId en el index para trasladar id a otras vistas
         {
-            var response = await _viallService.Obtener<APIResponse>(villaId);
+            var response = await _viallService.Obtener<APIResponse>(villaId, HttpContext.Session.GetString(DS.SessionToken));
 
             if(response != null &&  response.IsExitoso == true)
             {
@@ -83,7 +84,7 @@ namespace Villa_Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                var response = await _viallService.Actualizar<APIResponse>(modelo);
+                var response = await _viallService.Actualizar<APIResponse>(modelo, HttpContext.Session.GetString(DS.SessionToken));
                 if(response != null && response.IsExitoso == true)
                 {
                     TempData["exitoso"] = "Villa actualizada exitosamente.";
@@ -107,7 +108,7 @@ namespace Villa_Web.Controllers
         //Get
         public async Task<IActionResult> RemoverVilla(int villaId) //Se utiliza asp-route-villaId en el index para trasladar id a otras vistas
         {
-            var response = await _viallService.Obtener<APIResponse>(villaId);
+            var response = await _viallService.Obtener<APIResponse>(villaId, HttpContext.Session.GetString(DS.SessionToken));
 
             if (response != null && response.IsExitoso == true)
             {
@@ -124,7 +125,7 @@ namespace Villa_Web.Controllers
         public async Task<IActionResult> RemoverVilla(VillaDTO modelo)
         {
 
-            var response = await _viallService.Remover<APIResponse>(modelo.Id);
+            var response = await _viallService.Remover<APIResponse>(modelo.Id, HttpContext.Session.GetString(DS.SessionToken));
             if (response != null && response.IsExitoso == true)
             {
                 TempData["exitoso"] = "Villa removida exitosamente.";

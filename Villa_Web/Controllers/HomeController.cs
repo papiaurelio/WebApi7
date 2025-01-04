@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using Villa_Utilidades;
 using Villa_Web.Models;
 using Villa_Web.Services.IServices;
 
@@ -23,7 +24,7 @@ namespace Villa_Web.Controllers
         public async Task<IActionResult> Index()
         {
             List<VillaDTO> villaList = new();
-            var response = await _villaService.ObtenerTodos<APIResponse>();
+            var response = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (response != null && response.IsExitoso)
             {

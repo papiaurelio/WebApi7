@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using Villa_Web.Models;
 using Villa_Web.Services.IServices;
@@ -59,6 +60,11 @@ namespace Villa_Web.Services
                 }
 
                 HttpResponseMessage apiResponse = null;
+
+                if (!string.IsNullOrEmpty(apiRequest.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiRequest.Token);
+                }
                 apiResponse = await client.SendAsync(message);
 
                 var apiContet = await apiResponse.Content.ReadAsStringAsync();
@@ -77,7 +83,7 @@ namespace Villa_Web.Services
                         return obj;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                     var errorResponse = JsonConvert.DeserializeObject<T>(apiContet);

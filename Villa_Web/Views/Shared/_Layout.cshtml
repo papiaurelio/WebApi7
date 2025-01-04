@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Villa_Utilidades
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAcc
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,6 +16,7 @@
 <body>
     <partial name="_Notificacion" /> @* Implementar alertas con TempData (autodestruccion de los datos) *@
 
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -19,6 +24,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
+
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
@@ -31,6 +37,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="NumeroVilla" asp-action="IndexNumeroVilla">NoVillas</a>
                         </li>
+                    </ul>
+
+
+                    <ul class="navbar-nav d-flex">
+
+                        @if(httpContextAcc.HttpContext.Session.GetString(DS.SessionToken) != null &&
+                        httpContextAcc.HttpContext.Session.GetString(DS.SessionToken).ToString().Length > 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Login">Iniciar sesión</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Registro">Registro</a>
+                            </li>
+                        }
+
+
                     </ul>
                 </div>
             </div>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Reflection;
+using Villa_Utilidades;
 using Villa_Web.Models;
 using Villa_Web.Models.ViewModel;
 using Villa_Web.Services.IServices;
@@ -23,7 +24,7 @@ namespace Villa_Web.Controllers
         public async Task<IActionResult> IndexNumeroVilla()
         {
             List<NumeroVillaDto> numeroVillasList = new();
-            var response = await _numeroVillaService.ObtenerTodos<APIResponse>();
+            var response = await _numeroVillaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (response != null && response.IsExitoso) 
             {
@@ -37,7 +38,7 @@ namespace Villa_Web.Controllers
         public async Task<IActionResult> CrearNumeroVilla()
         {
             NumeroVillaViewModel numeroVillaM = new();
-            var response = await _villaService.ObtenerTodos<APIResponse>();
+            var response = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (response != null && response.IsExitoso)
             {
@@ -59,7 +60,7 @@ namespace Villa_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _numeroVillaService.Crear<APIResponse>(model.NumeroVilla);
+                var response = await _numeroVillaService.Crear<APIResponse>(model.NumeroVilla, HttpContext.Session.GetString(DS.SessionToken));
 
                 if(response != null && response.IsExitoso)
                 {
@@ -76,7 +77,7 @@ namespace Villa_Web.Controllers
                 }
             }
 
-            var res = await _villaService.ObtenerTodos<APIResponse>();
+            var res = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (res != null && res.IsExitoso)
             {
@@ -99,13 +100,13 @@ namespace Villa_Web.Controllers
         {
             NumeroVilllaActualizarViewModel numeroVillaVM = new();
 
-            var response = await _numeroVillaService.Obtener<APIResponse>(villaNo);
+            var response = await _numeroVillaService.Obtener<APIResponse>(villaNo, HttpContext.Session.GetString(DS.SessionToken));
             if(response != null && response.IsExitoso)
             {
                 NumeroVillaDto modelo = JsonConvert.DeserializeObject<NumeroVillaDto>(Convert.ToString(response.Resultado));
                 numeroVillaVM.NumeroVilla = _mapper.Map<ActualizarNumeroVillaDto>(modelo);
 
-                var res = await _villaService.ObtenerTodos<APIResponse>();
+                var res = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
                 numeroVillaVM.VillaList = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(res.Resultado))
                                             .Select(v => new SelectListItem
@@ -127,7 +128,7 @@ namespace Villa_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _numeroVillaService.Actualizar<APIResponse>(model.NumeroVilla);
+                var response = await _numeroVillaService.Actualizar<APIResponse>(model.NumeroVilla, HttpContext.Session.GetString(DS.SessionToken));
 
                 if (response != null && response.IsExitoso)
                 {
@@ -144,7 +145,7 @@ namespace Villa_Web.Controllers
                 }
             }
 
-            var res = await _villaService.ObtenerTodos<APIResponse>();
+            var res = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
             if (res != null && res.IsExitoso)
             {
@@ -165,13 +166,13 @@ namespace Villa_Web.Controllers
         {
             NumeroVilllaRemoverViewModel numeroVillaVM = new();
 
-            var response = await _numeroVillaService.Obtener<APIResponse>(villaNo);
+            var response = await _numeroVillaService.Obtener<APIResponse>(villaNo, HttpContext.Session.GetString(DS.SessionToken));
             if (response != null && response.IsExitoso)
             {
                 NumeroVillaDto modelo = JsonConvert.DeserializeObject<NumeroVillaDto>(Convert.ToString(response.Resultado));
                 numeroVillaVM.NumeroVilla = modelo; //no se mapea por que ya es del mismo tipo
 
-                var res = await _villaService.ObtenerTodos<APIResponse>();
+                var res = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
 
                 numeroVillaVM.VillaList = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(res.Resultado))
                                             .Select(v => new SelectListItem
@@ -191,7 +192,7 @@ namespace Villa_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoverNumeroVilla(NumeroVilllaRemoverViewModel modelo)
         {
-            var response =  await _numeroVillaService.Remover<APIResponse>(modelo.NumeroVilla.NoVilla);
+            var response =  await _numeroVillaService.Remover<APIResponse>(modelo.NumeroVilla.NoVilla, HttpContext.Session.GetString(DS.SessionToken));
 
             if(response != null && response.IsExitoso)
             {
