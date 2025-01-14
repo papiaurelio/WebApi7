@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using Villa_Utilidades;
 using Villa_Web.Models;
+using Villa_Web.Models.ViewModel;
 using Villa_Web.Services.IServices;
 
 namespace Villa_Web.Controllers
@@ -21,16 +22,29 @@ namespace Villa_Web.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1 )
         {
             List<VillaDTO> villaList = new();
-            var response = await _villaService.ObtenerTodos<APIResponse>(HttpContext.Session.GetString(DS.SessionToken));
+
+            VillaPaginadoViewModel villaVM = new VillaPaginadoViewModel();
+
+            if (pageNumber < 1) pageNumber = 1;
+            var response = await _villaService.ObtenerTodosPaginado<APIResponse>(HttpContext.Session.GetString(DS.SessionToken), pageNumber, 4);
 
             if (response != null && response.IsExitoso)
             {
                 villaList = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Resultado));
+                villaVM = new VillaPaginadoViewModel()
+                {
+                    VillaList = villaList,
+                    PagesNumber = pageNumber,
+                    TotalPages = JsonConvert.DeserializeObject<int>(Convert.ToString(response.TotalPaginas))
+                };
+
+                if (pageNumber > 1) villaVM.Previo = "";
+                if (villaVM.TotalPages <= pageNumber) villaVM.Siguiente = "disabled";
             }
-            return View(villaList);
+            return View(villaVM);
         }
 
         public IActionResult Privacy()

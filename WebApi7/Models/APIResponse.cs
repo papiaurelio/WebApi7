@@ -16,5 +16,7 @@ namespace WebApi7.Models
 
         //El retorno de la api puede ser cualquier tipo de objeto
         public object Resultado { get; set; }
+
+        public int TotalPaginas { get; set; }
     }
 }

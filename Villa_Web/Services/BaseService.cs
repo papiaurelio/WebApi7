@@ -1,8 +1,9 @@
-﻿
+﻿ 
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Web;
 using Villa_Web.Models;
 using Villa_Web.Services.IServices;
 
@@ -28,7 +29,22 @@ namespace Villa_Web.Services
                 var client = _httpClient.CreateClient("VillaAPI");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
-                message.RequestUri = new Uri(apiRequest.Url);
+
+                if(apiRequest.Parametros == null)
+                {
+                    message.RequestUri = new Uri(apiRequest.Url);
+                }
+                else  //agregar paginacion si los parametros estan llenos.
+                {
+                    var builder  = new UriBuilder(apiRequest.Url);
+                    var query = HttpUtility.ParseQueryString(builder.Query);
+                    query["PageNumber"] = apiRequest.Parametros.PageNumber.ToString();
+                    query["PageSize"] = apiRequest.Parametros.PageSize.ToString();
+                    builder.Query = query.ToString();
+                    string url = builder.ToString();
+                    message.RequestUri = new Uri(url);
+                }
+                
 
                 if (apiRequest.Datos != null)
                 {

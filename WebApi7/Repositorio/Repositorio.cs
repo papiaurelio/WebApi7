@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
 using WebApi7.Datos;
+using WebApi7.Models.Especificaciones;
 using WebApi7.Repositorio.IRepositorio;
 
 namespace WebApi7.Repositorio
@@ -72,6 +73,26 @@ namespace WebApi7.Repositorio
             }
 
             return await query.ToListAsync();
+        }
+
+        public PagedList<T> ObtenerTodosPaginado(Parametros parametros, Expression<Func<T, bool>> filtro = null, string? incluirPropiedades = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filtro != null)
+            {
+                query = query.Where(filtro);
+            }
+
+            if (incluirPropiedades != null) //Villa.otroModelo
+            {
+                foreach (var incluirProp in incluirPropiedades.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(incluirProp);
+                }
+            }
+
+            return PagedList<T>.ToPagedList(query, parametros.PageNumber, parametros.PageSize);
         }
 
         public async Task Remover(T entidad)

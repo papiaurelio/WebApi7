@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WebApi7.Models.Especificaciones;
 
 namespace WebApi7.Repositorio.IRepositorio
 {
@@ -7,6 +8,8 @@ namespace WebApi7.Repositorio.IRepositorio
         Task Crear(T entidad);
 
         Task<List<T>> ObtenerTodos(Expression<Func<T, bool>> filtro = null, string? incluirPropiedades = null);
+
+        PagedList<T> ObtenerTodosPaginado(Parametros parametros, Expression<Func<T, bool>> filtro = null, string? incluirPropiedades = null);
 
         //tracked para trabajar con el objeto sin tener problemas de reutilizacion
         Task<T> Obtener(Expression<Func<T, bool>> filtro = null, bool tracked = true, string? incluirPropiedades = null);

@@ -106,6 +106,8 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
+//Agregar caching a la api
+builder.Services.AddResponseCaching();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => 

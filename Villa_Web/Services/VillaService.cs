@@ -57,6 +57,22 @@ namespace Villa_Web.Services
             });
         }
 
+        public Task<T> ObtenerTodosPaginado<T>(string token, int pageNumber = 1, int pageSize = 4)
+        {
+            Parametros parametros = new Parametros()
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            return SendAsync<T>(new APIRequest()
+            {
+                TipoApi = DS.TipoApi.GET,
+                Url = _villaUrl + "/api/v1/Villa/VillasPaginado",
+                Token = token,
+                Parametros = parametros
+            });
+        }
+
         public Task<T> Remover<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()

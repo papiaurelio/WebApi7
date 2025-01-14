@@ -8,6 +8,7 @@ using System.Net;
 using WebApi7.Datos;
 using WebApi7.Models;
 using WebApi7.Models.DTO;
+using WebApi7.Models.Especificaciones;
 using WebApi7.Repositorio.IRepositorio;
 
 namespace WebApi7.Controllers.v1
@@ -34,6 +35,7 @@ namespace WebApi7.Controllers.v1
 
         [HttpGet]
         [ProducesResponseType(200)]
+        [ResponseCache(Duration = 30)]  //Agregando caching
         [Authorize]
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
@@ -59,6 +61,34 @@ namespace WebApi7.Controllers.v1
 
             return _apiResponse;
         }
+
+        [HttpGet("VillasPaginado")]
+        [ProducesResponseType(200)]
+        [ResponseCache(Duration = 30)] 
+        public ActionResult<APIResponse> GetVillaPaginado([FromQuery] Parametros parametros) 
+        {
+            try 
+	        {
+                var villaList = _villaRepositorio.ObtenerTodosPaginado(parametros);
+                _apiResponse.Resultado = _mapper.Map<IEnumerable<VillaDTO>>(villaList);
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.TotalPaginas = villaList.Metadata.TotalPages;
+
+                return Ok(_apiResponse);
+	        }
+            catch (Exception ex)
+            {
+                _apiResponse.IsExitoso = false;
+                _apiResponse.ErrorMessages = new List<string>()
+                {
+                    ex.Message
+                };
+
+            }
+
+            return _apiResponse;
+        }
+
 
         [HttpGet("{id:int}", Name = "GetVilla")]
         [ProducesResponseType(200)]
