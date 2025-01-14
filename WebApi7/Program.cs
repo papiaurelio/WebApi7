@@ -54,7 +54,38 @@ builder.Services.AddSwaggerGen(options => {
             new List<string>()
         }
     });
+
+    //versionamiento
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Villa v1",
+        Description = "Version 1."
+    });
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2",
+        Title = "Villa v2",
+        Description = "Version 2."
+    });
 });
+
+//agregar versionamiento
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true; //Agarra la version por defecto.
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true; //reportar numero de reportes en la documentacion 
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
@@ -117,6 +148,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+
+
+    //agregar versionamiento a Swagger
+    app.UseSwaggerUI(options => 
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Villa_v1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "Villa_v2");
+    });
     app.UseSwaggerUI();
 }
 

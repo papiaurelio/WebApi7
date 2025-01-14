@@ -20,7 +20,7 @@ namespace Villa_Web.Services
             {
                 TipoApi = DS.TipoApi.PUT,
                 Datos = villaDto,
-                Url = _villaUrl + "/api/NumeroVilla/"+villaDto.NoVilla,
+                Url = _villaUrl + "/api/v1/NumeroVilla/"+villaDto.NoVilla,
                 Token = token
             });
         }
@@ -32,7 +32,7 @@ namespace Villa_Web.Services
             {
                 TipoApi = DS.TipoApi.POST,
                 Datos = villaDto,
-                Url = _villaUrl+"/api/NumeroVilla",
+                Url = _villaUrl+ "/api/v1/NumeroVilla",
                 Token = token
             });
         }
@@ -42,7 +42,7 @@ namespace Villa_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.GET,
-                Url = _villaUrl + "/api/NumeroVilla/"+id,
+                Url = _villaUrl + "/api/v1/NumeroVilla/" + id,
                 Token = token
             });
         }
@@ -52,7 +52,7 @@ namespace Villa_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.GET,
-                Url = _villaUrl + "/api/NumeroVilla/",
+                Url = _villaUrl + "/api/v1/NumeroVilla/",
                 Token = token
             });
         }
@@ -62,7 +62,7 @@ namespace Villa_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 TipoApi = DS.TipoApi.DELETE,
-                Url = _villaUrl + "/api/NumeroVilla/" + id,
+                Url = _villaUrl + "/api/v1/NumeroVilla/" + id,
                 Token = token
             });
         }

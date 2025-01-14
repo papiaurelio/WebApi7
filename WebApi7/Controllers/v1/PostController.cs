@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi7.Models;
 using WebApi7.Services;
 
-namespace WebApi7.Controllers
+namespace WebApi7.Controllers.v1
 {
     [Route("api/[controller]")]
     [ApiController]

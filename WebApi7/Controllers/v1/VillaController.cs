@@ -10,24 +10,23 @@ using WebApi7.Models;
 using WebApi7.Models.DTO;
 using WebApi7.Repositorio.IRepositorio;
 
-namespace WebApi7.Controllers
+namespace WebApi7.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class NumeroVillaController : ControllerBase
+    [ApiVersion("1.0")]
+    public class VillaController : ControllerBase
     {
-        private readonly ILogger<NumeroVillaController> _logger;
+        private readonly ILogger<VillaController> _logger;
         private readonly IVillaRepositorio _villaRepositorio;
-        private readonly INumeroVillaRepositorio _numeroVillaRepositorio;
         private readonly IMapper _mapper;
 
         protected APIResponse _apiResponse;
 
-        public NumeroVillaController(ILogger<NumeroVillaController> logger, IVillaRepositorio villaRepositoriop, IMapper mapper, INumeroVillaRepositorio numeroVillaRepositorio)
+        public VillaController(ILogger<VillaController> logger, IVillaRepositorio villaRepositoriop, IMapper mapper)
         {
             _logger = logger;
             _villaRepositorio = villaRepositoriop;
-            _numeroVillaRepositorio = numeroVillaRepositorio;
             _mapper = mapper;
 
             _apiResponse = new APIResponse();
@@ -36,15 +35,15 @@ namespace WebApi7.Controllers
         [HttpGet]
         [ProducesResponseType(200)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetNumeroVillas()
+        public async Task<ActionResult<APIResponse>> GetVillas()
         {
 
             try
             {
                 _logger.LogInformation("Obteniendo informacion");
-                IEnumerable<NumeroVilla> numeroVillasList = await _numeroVillaRepositorio.ObtenerTodos(incluirPropiedades: "Villa");
+                IEnumerable<Villa> villasList = await _villaRepositorio.ObtenerTodos();
 
-                _apiResponse.Resultado = _mapper.Map<IEnumerable<NumeroVillaDto>>(numeroVillasList);
+                _apiResponse.Resultado = _mapper.Map<IEnumerable<VillaDTO>>(villasList);
                 _apiResponse.StatusCode = HttpStatusCode.OK;
                 return Ok(_apiResponse);
             }
@@ -61,12 +60,13 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpGet("{id:int}", Name = "GetNumeroVilla")]
+        [HttpGet("{id:int}", Name = "GetVilla")]
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<APIResponse>> GetNumeroVilla(int id)
+
+        public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             try
             {
@@ -77,16 +77,16 @@ namespace WebApi7.Controllers
                     return BadRequest(_apiResponse);
                 }
 
-                var numeroVilla = await _numeroVillaRepositorio.Obtener(x => x.NoVilla == id, incluirPropiedades: "Villa");
+                var villa = await _villaRepositorio.Obtener(x => x.Id == id);
 
-                if (numeroVilla == null)
+                if (villa == null)
                 {
                     _apiResponse.StatusCode = HttpStatusCode.NotFound;
-                    _apiResponse.IsExitoso= false;
+                    _apiResponse.IsExitoso = false;
                     return NotFound(_apiResponse);
                 }
 
-                _apiResponse.Resultado = _mapper.Map<NumeroVillaDto>(numeroVilla);
+                _apiResponse.Resultado = _mapper.Map<VillaDTO>(villa);
                 _apiResponse.StatusCode = HttpStatusCode.OK;
 
                 return Ok(_apiResponse);
@@ -108,26 +108,20 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<APIResponse>> CrearNumeroVilla([FromBody] CrearNumeroVillaDto createDto)
+        public async Task<ActionResult<APIResponse>> CrearVilla([FromBody] CrearVillaDto createDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
-                }
-
-                if (await _numeroVillaRepositorio.Obtener(x => x.NoVilla == createDto.NoVilla) != null)
-                {
-                    ModelState.AddModelError("ErrorMessages", "El numero de villa ya existe");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);
                 }
 
-                if (await _villaRepositorio.Obtener(v => v.Id == createDto.VillaId) == null)
+                if (await _villaRepositorio.Obtener(x => x.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
                 {
-                    ModelState.AddModelError("ErrorMessages", "Hay un error con la villa principal.");
+                    ModelState.AddModelError("ErrorMessages", "La villa ya existe.");
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
                     return BadRequest(ModelState);
@@ -139,16 +133,16 @@ namespace WebApi7.Controllers
                     return BadRequest();
                 }
 
-                NumeroVilla modelo = _mapper.Map<NumeroVilla>(createDto);
+                Villa modelo = _mapper.Map<Villa>(createDto);
                 modelo.FechaActualizacion = DateTime.Now;
                 modelo.FechaActualizacion = DateTime.Now;
 
-                await _numeroVillaRepositorio.Crear(modelo);
+                await _villaRepositorio.Crear(modelo);
                 _apiResponse.Resultado = modelo;
                 _apiResponse.StatusCode = HttpStatusCode.Created;
 
 
-                return CreatedAtRoute("GetNumeroVilla", new { id = modelo.NoVilla }, _apiResponse);
+                return CreatedAtRoute("GetVilla", new { id = modelo.Id }, _apiResponse);
             }
             catch (Exception ex)
             {
@@ -162,13 +156,13 @@ namespace WebApi7.Controllers
             return _apiResponse;
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteNumeroVilla")]
+        [HttpDelete("{id:int}", Name = "DeleteVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "admin")]
 
-        public async Task<IActionResult> DeleteNumeroVilla(int id)
+        public async Task<IActionResult> DeleteVilla(int id)
         {
 
             try
@@ -180,16 +174,16 @@ namespace WebApi7.Controllers
                     return BadRequest(_apiResponse);
                 }
 
-                var numeroVilla = await _numeroVillaRepositorio.Obtener(x => x.NoVilla == id);
+                var villa = await _villaRepositorio.Obtener(x => x.Id == id);
 
-                if (numeroVilla == null)
+                if (villa == null)
                 {
                     _apiResponse.IsExitoso = false;
                     _apiResponse.StatusCode = HttpStatusCode.NotFound;
                     return NotFound();
                 }
 
-                await _numeroVillaRepositorio.Remover(numeroVilla);
+                await _villaRepositorio.Remover(villa);
 
 
                 _apiResponse.StatusCode = HttpStatusCode.NoContent;
@@ -197,12 +191,12 @@ namespace WebApi7.Controllers
             }
             catch (Exception ex)
             {
-                _apiResponse.IsExitoso =false;
+                _apiResponse.IsExitoso = false;
                 _apiResponse.ErrorMessages = new List<string>() { ex.Message };
             }
 
             return BadRequest(_apiResponse);
-           
+
         }
 
         [HttpPut("{id:int}")]
@@ -210,38 +204,30 @@ namespace WebApi7.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateNumeroVilla(int id, [FromBody] ActualizarNumeroVillaDto nVillaActualizada) 
+        public async Task<IActionResult> UpdateVilla(int id, [FromBody] ActualizarVillaDto villaActualizada)
         {
             try
             {
-                if (nVillaActualizada == null || id != nVillaActualizada.NoVilla)
+                if (villaActualizada == null || id != villaActualizada.Id)
                 {
                     _apiResponse.IsExitoso = false;
                     _apiResponse.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_apiResponse);
                 }
 
-                if (await _villaRepositorio.Obtener(v => v.Id == nVillaActualizada.VillaId) == null)
-                {
-                    ModelState.AddModelError("ErrorMessages", "Hay un error con la villa principal.");
-                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
 
-                    return BadRequest(ModelState);
-                }
+                var villa = await _villaRepositorio.Obtener(x => x.Id == id, tracked: false);
 
-
-                var numeroVilla = await _numeroVillaRepositorio.Obtener(x => x.NoVilla == id, tracked: false);
-
-                if (numeroVilla == null)
+                if (villa == null)
                 {
                     _apiResponse.IsExitoso = false;
                     _apiResponse.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound("El numero de villa no existe. " + id);
+                    return NotFound("No existe el id: " + id);
                 }
 
-                NumeroVilla modelo = _mapper.Map<NumeroVilla>(nVillaActualizada);
+                Villa modelo = _mapper.Map<Villa>(villaActualizada);
 
-                await _numeroVillaRepositorio.Actualizar(modelo);
+                await _villaRepositorio.Actualizar(modelo);
 
                 _apiResponse.StatusCode = HttpStatusCode.NoContent;
 

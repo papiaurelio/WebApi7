@@ -8,6 +8,8 @@ namespace WebApi7.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [ApiVersionNeutral]  //Especificamos que este disponible en todas las versiones
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepositorio _usuarioRepo;
@@ -43,7 +45,7 @@ namespace WebApi7.Controllers
         public async Task<IActionResult> Registro([FromBody] RegistroRequestDto modelo)
         {
             bool boolIsUsuarioUnico = _usuarioRepo.IsUsuarioUnico(modelo.UserName);
-            
+
             if (!boolIsUsuarioUnico)
             {
                 _apiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
