@@ -1,21 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebApi7.Models;
 
 namespace WebApi7.Datos
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext<UsuarioIdentity>
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
         {
             
         }
+        public DbSet<UsuarioIdentity> UsuarioIdentity { get; set; }
         public DbSet<Villa> Villas { get; set; }
         public DbSet<NumeroVilla> NumeroVilla { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Villa>().HasData(
             new Villa()
             {

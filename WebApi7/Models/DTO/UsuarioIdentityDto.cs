@@ -1,11 +1,9 @@
-﻿namespace Villa_Web.Models.DTO
+﻿namespace WebApi7.Models.DTO
 {
-    public class UsuarioDto
+    public class UsuarioIdentityDto
     {
         public string Id { get; set; }
         public string UserName { get; set; }
         public string Nombres { get; set; }
-        public string Password { get; set; }
     }
-
 }

@@ -17,6 +17,7 @@ namespace WebApi7.Mapper
             CreateMap<NumeroVilla, NumeroVillaDto>().ReverseMap();
             CreateMap<NumeroVilla, CrearNumeroVillaDto>().ReverseMap();
             CreateMap<NumeroVilla, ActualizarNumeroVillaDto>().ReverseMap();
+            CreateMap<UsuarioIdentity, UsuarioIdentityDto>().ReverseMap();
 
         }
     }

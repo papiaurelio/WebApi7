@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Villa_Utilidades;
@@ -18,6 +19,8 @@ namespace Villa_Web.Controllers
             _mapper = mapper;
             _viallService = viallService;
         }
+
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> IndexVilla()
         {
             List<VillaDTO> villaList = new();
@@ -32,6 +35,7 @@ namespace Villa_Web.Controllers
         }
 
         //get
+        [Authorize(Roles = "admin")]
         public IActionResult CrearVilla()
         {
             return View(); //retorna la misma funcion
@@ -64,6 +68,7 @@ namespace Villa_Web.Controllers
             return View(modelo);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> ActualizarVilla(int villaId) //Se utiliza asp-route-villaId en el index para trasladar id a otras vistas
         {
             var response = await _viallService.Obtener<APIResponse>(villaId, HttpContext.Session.GetString(DS.SessionToken));
@@ -106,6 +111,7 @@ namespace Villa_Web.Controllers
 
 
         //Get
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoverVilla(int villaId) //Se utiliza asp-route-villaId en el index para trasladar id a otras vistas
         {
             var response = await _viallService.Obtener<APIResponse>(villaId, HttpContext.Session.GetString(DS.SessionToken));

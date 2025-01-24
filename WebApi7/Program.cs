@@ -11,6 +11,7 @@ using WebApi7.Repositorio;
 using WebApi7.Repositorio.IRepositorio;
 using WebApi7.Services;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,6 +115,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>()
+                            .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
 //ESE CODIGO FUNCIONA PARA ESTANDARIZAR LOS ERRORES.

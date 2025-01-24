@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol.Plugins;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Villa_Utilidades;
 using Villa_Web.Models;
@@ -33,10 +34,13 @@ namespace Villa_Web.Controllers
             {
                 LoginResponseDto responseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(response.Resultado));
 
+                var handler = new JwtSecurityTokenHandler();
+                var jwt = handler.ReadJwtToken(responseDto.Token);
+
                 //Claims
                 var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                identity.AddClaim(new Claim(ClaimTypes.Name, responseDto.Usuario.UserName));
-                identity.AddClaim(new Claim(ClaimTypes.Role, responseDto.Usuario.Role));
+                identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(c => c.Type== "unique_name").Value));
+                identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(c => c.Type == "role").Value));
 
                 var principal = new ClaimsPrincipal(identity);
 

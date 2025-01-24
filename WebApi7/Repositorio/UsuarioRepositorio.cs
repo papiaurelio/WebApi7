@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,14 +16,22 @@ namespace WebApi7.Repositorio
     {
         private readonly ApplicationDbContext _db;
         private readonly string secretKey;
-        public UsuarioRepositorio(ApplicationDbContext db, IConfiguration configuration)
+        private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
+
+        public UsuarioRepositorio(ApplicationDbContext db, IConfiguration configuration, UserManager<UsuarioIdentity> userManager,
+                        IMapper mapper, RoleManager<IdentityRole> roleManager)
         {
             _db = db;
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
+            _userManager = userManager;
+            _mapper = mapper;
+            _roleManager = roleManager;
         }
         public bool IsUsuarioUnico(string userName)
         {
-            var usuario = _db.Usuario.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower());
+            var usuario = _db.UsuarioIdentity.FirstOrDefault(u => u.UserName.ToLower() == userName.ToLower());
 
             if (usuario == null)
             {
@@ -33,10 +43,11 @@ namespace WebApi7.Repositorio
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            var usuario = await _db.Usuario.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower()
-                                                                  && u.Password == loginRequestDto.Password);
+            var usuario = await _db.UsuarioIdentity.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
 
-            if (usuario == null)
+            bool isValid = await _userManager.CheckPasswordAsync(usuario, loginRequestDto.Password);
+
+            if (usuario == null || isValid == false)
             {
                 return new LoginResponseDto()
                 {
@@ -46,7 +57,7 @@ namespace WebApi7.Repositorio
             }
 
             //Generar JWT
-
+            var roles = await _userManager.GetRolesAsync(usuario);
             var tokenHandler = new  JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -54,8 +65,8 @@ namespace WebApi7.Repositorio
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.Id.ToString()),
-                    new Claim(ClaimTypes.Role, usuario.Role.ToString())
+                    new Claim(ClaimTypes.Name, usuario.UserName),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(30),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -63,34 +74,48 @@ namespace WebApi7.Repositorio
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            usuario.Password = "none";
             LoginResponseDto loginResponseDto = new()
             {
                 Token = tokenHandler.WriteToken(token),
-                Usuario = usuario,
-
+                Usuario = _mapper.Map<UsuarioIdentityDto>(usuario)
             };
 
             return loginResponseDto;
 
         }
 
-        public async Task<Usuario> Registrar(RegistroRequestDto registroRequestDto)
+        public async Task<UsuarioIdentityDto> Registrar(RegistroRequestDto registroRequestDto)
         {
-            Usuario usuario = new()
+            UsuarioIdentity usuario = new()
             {
                 UserName = registroRequestDto.UserName,
-                Password = registroRequestDto.Password,
+                Email = registroRequestDto.UserName,
+                NormalizedEmail = registroRequestDto.UserName.ToUpper(),
                 Nombres = registroRequestDto.Nombres,
-                Role = registroRequestDto.Role,
             };
 
-            await _db.Usuario.AddAsync(usuario);
-            await _db.SaveChangesAsync();
+            try
+            {
+                var resultado = await _userManager.CreateAsync(usuario, registroRequestDto.Password);
+                if (resultado.Succeeded)
+                {
+                    if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("admin"));
+                        await _roleManager.CreateAsync(new IdentityRole("cliente"));
+                    }
+                    await _userManager.AddToRoleAsync(usuario, "admin");
+                    var usuarioAp = _db.UsuarioIdentity.FirstOrDefault(u => u.UserName == registroRequestDto.UserName );
 
-            usuario.Password = ""; //formatear password
+                    return _mapper.Map<UsuarioIdentityDto>(usuarioAp);        
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-            return usuario;
+            return new UsuarioIdentityDto();
         }
     }
 }

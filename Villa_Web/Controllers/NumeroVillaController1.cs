@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -21,6 +22,9 @@ namespace Villa_Web.Controllers
             _mapper = mapper;
             _villaService = villaService;
         }
+
+
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> IndexNumeroVilla()
         {
             List<NumeroVillaDto> numeroVillasList = new();
@@ -35,6 +39,7 @@ namespace Villa_Web.Controllers
 
 
         //get
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CrearNumeroVilla()
         {
             NumeroVillaViewModel numeroVillaM = new();
@@ -96,6 +101,7 @@ namespace Villa_Web.Controllers
 
 
         //get 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> ActualizarNumeroVilla(int villaNo)
         {
             NumeroVilllaActualizarViewModel numeroVillaVM = new();
@@ -162,6 +168,7 @@ namespace Villa_Web.Controllers
         }
 
         //get
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoverNumeroVilla(int villaNo)
         {
             NumeroVilllaRemoverViewModel numeroVillaVM = new();

@@ -9,6 +9,6 @@ namespace WebApi7.Repositorio.IRepositorio
 
         Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
 
-        Task<Usuario> Registrar(RegistroRequestDto registroRequestDto);
+        Task<UsuarioIdentityDto> Registrar(RegistroRequestDto registroRequestDto);
     }
 }

@@ -36,7 +36,7 @@ namespace WebApi7.Controllers.v1
         [HttpGet]
         [ProducesResponseType(200)]
         [ResponseCache(Duration = 30)]  //Agregando caching
-        [Authorize]
+        [Authorize(Roles = "admin", AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<APIResponse>> GetVillas()
         {
 
@@ -94,7 +94,7 @@ namespace WebApi7.Controllers.v1
         [ProducesResponseType(200)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
+        [Authorize(Roles = "admin", AuthenticationSchemes = "Bearer")]
 
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
@@ -137,7 +137,7 @@ namespace WebApi7.Controllers.v1
         [ProducesResponseType(201)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin", AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<APIResponse>> CrearVilla([FromBody] CrearVillaDto createDto)
         {
             try
@@ -190,7 +190,7 @@ namespace WebApi7.Controllers.v1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin", AuthenticationSchemes = "Bearer")]
 
         public async Task<IActionResult> DeleteVilla(int id)
         {
@@ -233,7 +233,7 @@ namespace WebApi7.Controllers.v1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin", AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> UpdateVilla(int id, [FromBody] ActualizarVillaDto villaActualizada)
         {
             try
